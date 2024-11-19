@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/components/text_field.dart';
 import 'package:flutter_application_1/const.dart';
+import 'package:firebase_database/firebase_database.dart';
 
 class AdmUserScreen extends StatefulWidget {
   const AdmUserScreen({super.key});
@@ -11,6 +12,15 @@ class AdmUserScreen extends StatefulWidget {
 }
 
 class _AdmUserScreenState extends State<AdmUserScreen> {
+
+  String inputText = '';
+
+  void handleTextChanged(String text) {
+    setState(() {
+      inputText = text;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -93,6 +103,7 @@ class _AdmUserScreenState extends State<AdmUserScreen> {
       children: [
         TextFields(
           text: textFieldText,
+          onChanged: handleTextChanged,
         ),
         _gap,
         Row(

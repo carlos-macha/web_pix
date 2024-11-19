@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 
 class TextFields extends StatefulWidget {
-  const TextFields({super.key, this.text});
+  const TextFields({super.key, required this.text, required this.onChanged});
   final text;
+  final ValueChanged<String> onChanged;
 
   @override
   State<TextFields> createState() => _TextFieldsState();
@@ -14,7 +15,9 @@ class _TextFieldsState extends State<TextFields> {
     return TextField(
       onChanged: (texto) {
         setState(
-          () {},
+          () {
+            widget.onChanged(texto);
+          },
         );
       },
       maxLines: 1,

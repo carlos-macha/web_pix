@@ -1,7 +1,9 @@
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/components/text_field.dart';
 import 'package:flutter_application_1/const.dart';
 import 'package:flutter_application_1/screens/adm_user/adm_user_screen.dart';
+import 'package:flutter_application_1/screens/normal_user/normal_user_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -12,6 +14,47 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
+  
+  String email = '';
+  String password = '';
+  final DatabaseReference _database = FirebaseDatabase.instance.ref();
+  Map<String, dynamic>? userFound;
+
+
+  Future<void> fetchUserByEmail() async {
+    try {
+      final snapshot = await _database.child("users").child(email).get();
+      if (snapshot.exists) {
+        final data = Map<String, dynamic>.from(snapshot.value as Map); // Dados do usuário
+        if (data["password"] == password && data["new"] == false) {
+          print('ok');
+          data["type"] == "adm"
+           ? Navigator.pushNamed(context, AdmUserScreen.id)
+           : Navigator.pushNamed(context, NormalUserScreen.id);
+          } else if (data["password"] == password && data["new"] == true) {
+            
+          } else {
+
+          };
+      }
+    } catch (e) {
+      print("Erro ao buscar usuário: $e");
+    }
+  }
+
+
+void handleEmailChanged(String text) {
+    setState(() {
+      email = text;
+    });
+  }
+
+  void handlePasswordChanged(String text) {
+    setState(() {
+      password = text;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     Widget _gap = SizedBox(
@@ -35,17 +78,19 @@ class _LoginScreenState extends State<LoginScreen> {
                   Text(
                     'Acesse o Sistema',
                     style: TextStyle(
-                      color: Color(0xFFE0E0E0),
+                      color: textcolor,
                       fontSize: 20,
                     ),
                   ),
                   _gap,
                   TextFields(
                     text: 'E-mail',
+                    onChanged: handleEmailChanged,
                   ),
                   _gap,
                   TextFields(
                     text: 'Password',
+                    onChanged: handlePasswordChanged,
                   ),
                   _gap,
                   Container(
@@ -57,7 +102,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       child: SizedBox(
                         child: ElevatedButton(
                           onPressed: () {
-                            Navigator.pushNamed(context, AdmUserScreen.id);
+                            fetchUserByEmail();
                           },
                           child: Text(
                             'Login',
