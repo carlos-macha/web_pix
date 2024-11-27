@@ -6,6 +6,11 @@ const textcolor = Color(0xFFE0E0E0);
 
 const stylebutton = TextStyle(
   color: lightcolor, 
-  fontSize: 20, 
+  fontSize: 15, 
   fontWeight: FontWeight.bold
+);
+
+const styleText = TextStyle(
+  color: textcolor,
+  fontSize: 15,
 );
