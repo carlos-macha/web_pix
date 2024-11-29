@@ -17,6 +17,7 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   
   String email = '';
+  bool auth = true;
   String password = '';
   final DatabaseReference _database = FirebaseDatabase.instance.ref();
   Map<String, dynamic>? userFound;
@@ -30,10 +31,10 @@ class _LoginScreenState extends State<LoginScreen> {
         if (data["password"] == password && data["new"] == false) {
           print('ok');
           data["type"] == "adm"
-           ? Navigator.pushNamed(context, AdmUserScreen.id)
-           : Navigator.pushNamed(context, NormalUserScreen.id, arguments: email);
+           ? Navigator.pushNamed(context, AdmUserScreen.id, arguments: auth)
+           : Navigator.pushNamed(context, NormalUserScreen.id, arguments: {'email': email, 'auth': auth});
           } else if (data["password"] == password && data["new"] == true) {
-            Navigator.pushNamed(context, PasswordScreen.id, arguments: email);
+            Navigator.pushNamed(context, PasswordScreen.id, arguments: {'email': email, 'auth': auth});
           } else {
 
           };

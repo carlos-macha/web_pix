@@ -17,15 +17,33 @@ class _PasswordScreenState extends State<PasswordScreen> {
   String password1 = '';
   String password2 = '';
   String email = '';
+  bool auth = false;
   final DatabaseReference _databaseRef = FirebaseDatabase.instance.ref('users');
 
-   @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    // Acessa o argumento apenas na primeira vez que os dependentes mudam.
-    String? emailRout = ModalRoute.of(context)?.settings.arguments as String?;
-    email = emailRout.toString();
-    print(email);
+@override
+void didChangeDependencies() {
+  super.didChangeDependencies();
+  // Verifique se o argumento é um Map
+  final arguments = ModalRoute.of(context)?.settings.arguments as Map?;
+  if (arguments != null) {
+    email = arguments['email'] as String? ?? '';
+    auth = arguments['auth'] as bool? ?? false;
+  }
+  print('Email do usuário: $email');
+}
+
+  void Auth () {
+    if (auth == false) {
+      Navigator.pushNamed(context, LoginScreen.id);
+    }
+  }
+  
+  @override
+  void initState() {
+     WidgetsBinding.instance.addPostFrameCallback((_) {
+    Auth();
+  });
+    super.initState();
   }
 
   void handlePassword1Changed(String text) {

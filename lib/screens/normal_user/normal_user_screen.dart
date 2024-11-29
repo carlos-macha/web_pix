@@ -1,6 +1,7 @@
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/const.dart';
+import 'package:flutter_application_1/screens/login_screen.dart';
 
 class NormalUserScreen extends StatefulWidget {
   const NormalUserScreen({super.key});
@@ -11,6 +12,7 @@ class NormalUserScreen extends StatefulWidget {
 }
 
 class _NormalUserScreenState extends State<NormalUserScreen> {
+  bool auth = false;
   String email = '';
   List<Map<String, dynamic>> _users = [];
   List<Map<String, dynamic>> _machines = [];
@@ -18,16 +20,29 @@ class _NormalUserScreenState extends State<NormalUserScreen> {
       FirebaseDatabase.instance.ref('machines');
   final DatabaseReference _databaseRef = FirebaseDatabase.instance.ref('users');
 
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    // Obtém o e-mail passado via argumentos da rota.
-    email = ModalRoute.of(context)?.settings.arguments as String? ?? '';
-    print('Email do usuário: $email');
+@override
+void didChangeDependencies() {
+  super.didChangeDependencies();
+  // Verifique se o argumento é um Map
+  final arguments = ModalRoute.of(context)?.settings.arguments as Map?;
+  if (arguments != null) {
+    email = arguments['email'] as String? ?? '';
+    auth = arguments['auth'] as bool? ?? false;
+  }
+  print('Email do usuário: $email');
+}
+
+   void Auth () {
+    if (auth == false) {
+      Navigator.pushNamed(context, LoginScreen.id);
+    }
   }
 
   @override
   void initState() {
+     WidgetsBinding.instance.addPostFrameCallback((_) {
+    Auth();
+  });
     _fetchMachines();
     _fetchUsers();
     super.initState();

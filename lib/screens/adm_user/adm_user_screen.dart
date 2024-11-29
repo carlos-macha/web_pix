@@ -4,6 +4,7 @@ import 'package:flutter_application_1/const.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter_application_1/screens/adm_user/machine.dart';
 import 'package:flutter_application_1/screens/adm_user/user.dart';
+import 'package:flutter_application_1/screens/login_screen.dart';
 
 class AdmUserScreen extends StatefulWidget {
   const AdmUserScreen({super.key});
@@ -15,10 +16,31 @@ class AdmUserScreen extends StatefulWidget {
 
 class _AdmUserScreenState extends State<AdmUserScreen> {
   String inputText = '';
+  bool auth = false;
   final ScrollController _horizontalController = ScrollController();
   final ScrollController _verticalController = ScrollController();
   final DatabaseReference databaseRef = FirebaseDatabase.instance.ref('users');
   late StreamSubscription _userStream;
+
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    auth = ModalRoute.of(context)?.settings.arguments as bool? ?? false;
+  }
+
+   void Auth () {
+    if (auth == false) {
+      Navigator.pushNamed(context, LoginScreen.id);
+    }
+  }
+
+  @override
+  void initState() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+    Auth();
+  });
+    super.initState();
+  }
+
 
   @override
   void dispose() {
