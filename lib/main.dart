@@ -5,6 +5,7 @@ import 'package:flutter_application_1/firebase_options.dart';
 import 'package:flutter_application_1/screens/adm_user/adm_user_screen.dart';
 import 'package:flutter_application_1/screens/login_screen.dart';
 import 'package:flutter_application_1/screens/normal_user/normal_user_screen.dart';
+import 'package:flutter_application_1/screens/password_screen.dart';
 
 Future<void> main() async {
   // Garante que os widgets Flutter sejam inicializados antes de qualquer operação assíncrona
@@ -33,6 +34,7 @@ class WebPix extends StatelessWidget {
         LoginScreen.id: (context) => LoginScreen(),
         AdmUserScreen.id: (context) => AdmUserScreen(),
         NormalUserScreen.id: (context) => NormalUserScreen(),
+        PasswordScreen.id: (context) => PasswordScreen(),
       },
     );
   }

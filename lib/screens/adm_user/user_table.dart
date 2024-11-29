@@ -117,6 +117,7 @@ class _UserTableState extends State<UserTable> {
     try {
       await _databaseRef.child(email).update({
         'password': '12345678',
+        'new': true
       });
     } catch (e) {
       print(e);

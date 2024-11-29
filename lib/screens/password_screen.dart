@@ -2,58 +2,56 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/components/text_field.dart';
 import 'package:flutter_application_1/const.dart';
-import 'package:flutter_application_1/screens/adm_user/adm_user_screen.dart';
-import 'package:flutter_application_1/screens/normal_user/normal_user_screen.dart';
-import 'package:flutter_application_1/screens/password_screen.dart';
+import 'package:flutter_application_1/screens/login_screen.dart';
 
-class LoginScreen extends StatefulWidget {
-  const LoginScreen({super.key});
-  static const String id = '/';
+class PasswordScreen extends StatefulWidget {
+  const PasswordScreen({super.key});
+  static const String id = 'reset_password';
 
   @override
-  State<LoginScreen> createState() => _LoginScreenState();
+  State<PasswordScreen> createState() => _PasswordScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen> {
-  
+class _PasswordScreenState extends State<PasswordScreen> {
+
+  String password1 = '';
+  String password2 = '';
   String email = '';
-  String password = '';
-  final DatabaseReference _database = FirebaseDatabase.instance.ref();
-  Map<String, dynamic>? userFound;
+  final DatabaseReference _databaseRef = FirebaseDatabase.instance.ref('users');
 
+   @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // Acessa o argumento apenas na primeira vez que os dependentes mudam.
+    String? emailRout = ModalRoute.of(context)?.settings.arguments as String?;
+    email = emailRout.toString();
+    print(email);
+  }
 
-  Future<void> fetchUserByEmail() async {
-    try {
-      final snapshot = await _database.child("users").child(email).get();
-      if (snapshot.exists) {
-        final data = Map<String, dynamic>.from(snapshot.value as Map); // Dados do usuário
-        if (data["password"] == password && data["new"] == false) {
-          print('ok');
-          data["type"] == "adm"
-           ? Navigator.pushNamed(context, AdmUserScreen.id)
-           : Navigator.pushNamed(context, NormalUserScreen.id, arguments: email);
-          } else if (data["password"] == password && data["new"] == true) {
-            Navigator.pushNamed(context, PasswordScreen.id, arguments: email);
-          } else {
+  void handlePassword1Changed(String text) {
+    setState(() {
+      password1 = text;
+    });
+  }
 
-          };
-      }
+  void handlePassword2Changed(String text) {
+    setState(() {
+      password2 = text;
+    });
+  }
+
+  Future<void> ResetPassword () async {
+    if (password1 == password2 && password2.length >= 4) {
+      try {
+      await _databaseRef.child(email).update({
+        'password': password2,
+        'new': false
+      });
     } catch (e) {
-      print("Erro ao buscar usuário: $e");
+      print(e);
     }
-  }
-
-
-void handleEmailChanged(String text) {
-    setState(() {
-      email = text;
-    });
-  }
-
-  void handlePasswordChanged(String text) {
-    setState(() {
-      password = text;
-    });
+    Navigator.pushNamed(context, LoginScreen.id);
+    }
   }
 
   @override
@@ -77,7 +75,7 @@ void handleEmailChanged(String text) {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    'Acesse o Sistema',
+                    'Resetar Senha',
                     style: TextStyle(
                       color: textcolor,
                       fontSize: 20,
@@ -85,13 +83,13 @@ void handleEmailChanged(String text) {
                   ),
                   _gap,
                   TextFields(
-                    text: 'E-mail',
-                    onChanged: handleEmailChanged,
+                    text: 'Password',
+                    onChanged: handlePassword1Changed,
                   ),
                   _gap,
                   TextFields(
                     text: 'Password',
-                    onChanged: handlePasswordChanged,
+                    onChanged: handlePassword2Changed,
                   ),
                   _gap,
                   Container(
@@ -103,7 +101,7 @@ void handleEmailChanged(String text) {
                       child: SizedBox(
                         child: ElevatedButton(
                           onPressed: () {
-                            fetchUserByEmail();
+                            ResetPassword();
                           },
                           child: Text(
                             'Login',
